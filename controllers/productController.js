@@ -64,7 +64,6 @@ async function getProductPrice(req, res, id) {
       res.writeHead(404, { "Content-Type": "application/json" });
       res.end(JSON.stringify({ message: "Product not found." }));
     } else {
-      console.log("Product Found: " + JSON.stringify(product));
       res.writeHead(200, { "Content-Type": "application/json" });
       res.end(JSON.stringify(product));
     }

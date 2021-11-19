@@ -1,7 +1,7 @@
 const R = require("ramda");
 const { writeDataToFile } = require("../utils");
 const uuid = require("uuid");
-const products = require("../data/products");
+let products = require("../data/products");
 
 function create(product) {
   return new Promise((resolve, reject) => {
@@ -22,15 +22,12 @@ function findAll() {
 function findById(id) {
   return new Promise((resolve, reject) => {
     const productById = R.find(R.propEq("id", id))(products);
-    console.log(productById);
     resolve(productById);
   });
 }
 
 function fetchNameAndPrice(id) {
   return new Promise((resolve, reject) => {
-    // const result = products.filter((item) => item.id == id);
-
     const filteredProduct = R.filter((item) => item.id == id, products);
     const getNameAndPrice = R.project(["name", "price"]);
     const result = getNameAndPrice(filteredProduct);
@@ -41,10 +38,9 @@ function fetchNameAndPrice(id) {
 
 function update(id, product) {
   return new Promise((resolve, reject) => {
-    const index = products.find((p) => p.id === id);
+    const index = R.find(R.propEq("id", id))(products);
     products[index] = { id, ...product };
 
-    console.log("Product Index: ", index);
     writeDataToFile("./data/products.json", products);
     resolve({ message: "Updated Successfully.", data: products[index] });
   });
@@ -52,10 +48,8 @@ function update(id, product) {
 
 function remove(id) {
   return new Promise((resolve, reject) => {
-    // products = products.find((p) => p.id === parseInt(id));
-    products = R.filter((p) => p.id !== id);
+    products = R.filter((item) => item.id === id, products);
 
-    console.log(products);
     writeDataToFile("./data/products.json", products);
     resolve();
   });
