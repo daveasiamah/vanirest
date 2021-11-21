@@ -7,9 +7,9 @@ const {
   getProductPrice,
   updateProduct,
   deleteProduct,
+  applyDiscount,
 } = require("./controllers/productController");
 
-//TODO: create a router module
 const server = http.createServer((req, res) => {
   if (req.url === "/api/products/" && req.method === "GET") {
     res.writeHead(200, "Success", { "Content-Type": "text" });
@@ -48,6 +48,14 @@ const server = http.createServer((req, res) => {
     getProductPrice(req, res, id);
   } else if (req.url.match("/api/products/") && req.method === "POST") {
     createProduct(req, res);
+  } else if (
+    req.url.match(
+      /\/api\/products\/([a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12})/
+    ) &&
+    req.method === "PATCH"
+  ) {
+    const id = req.url.split("/")[3];
+    applyDiscount(req, res, id);
   } else {
     res.writeHead(404, { "Content-Type": "application/json" });
     res.end(JSON.stringify({ message: "Route not found" }));

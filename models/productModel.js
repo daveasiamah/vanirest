@@ -55,10 +55,13 @@ function remove(id) {
   });
 }
 
-//TODO: Adjust price
-function adjustPrice(id) {
+function adjustPrice(id, discount) {
   return new Promise((resolve, reject) => {
-    resolve("adjustPrice");
+    const product = R.find(R.propEq("id", id))(products);
+    const discountedProduct = R.pick(["price"], product);
+
+    const result = parseInt(discountedProduct.price) - parseInt(discount.price);
+    resolve(result);
   });
 }
 

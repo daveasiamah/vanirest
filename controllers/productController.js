@@ -71,8 +71,9 @@ async function getProductPrice(req, res, id) {
     console.log(error);
   }
 }
+
 //@Desc Update a Product
-//@route GET /api/products/:id
+//@route PUT /api/products/:id
 async function updateProduct(req, res, id) {
   try {
     const product = await Product.findById(id);
@@ -99,7 +100,7 @@ async function updateProduct(req, res, id) {
     console.log(error);
   }
 }
-//Convert to Ramda
+
 //@Desc Delete a Product
 //@route DELETE /api/products/:id
 async function deleteProduct(req, res, id) {
@@ -120,6 +121,39 @@ async function deleteProduct(req, res, id) {
   }
 }
 
+//@Desc Apply a discound to a Product
+//@route PATCH /api/products/:id
+async function applyDiscount(req, res, id) {
+  try {
+    const product = await Product.findById(id);
+
+    if (!product) {
+      res.writeHead(404, { "Content-Type": "application/json" });
+      res.end(JSON.stringify({ message: "Product not found." }));
+    } else {
+      const body = await getPostData(req);
+      const { price } = JSON.parse(body);
+
+      const discount = {
+        price: price || product.price,
+      };
+      console.log("Discount amount: " + discount.price);
+      const discountedProduct = await Product.adjustPrice(id, discount);
+      console.log(discountedProduct);
+      res.writeHead(200, { "Content-Type": "application/json" });
+
+      res.end(
+        JSON.stringify({
+          message: "Discount applied successfully.",
+          data: discountedProduct,
+        })
+      );
+    }
+  } catch (error) {
+    console.log(error);
+  }
+}
+
 module.exports = {
   createProduct,
   getProducts,
@@ -127,4 +161,5 @@ module.exports = {
   getProductPrice,
   updateProduct,
   deleteProduct,
+  applyDiscount,
 };
