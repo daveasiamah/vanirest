@@ -1,5 +1,8 @@
+const serverless = require("serverless-http");
 const http = require("http");
 const fs = require("fs");
+const router = require("./routes/router");
+
 const {
   createProduct,
   getProducts,
@@ -65,3 +68,5 @@ const server = http.createServer((req, res) => {
 const PORT = process.env.PORT || 5000;
 
 server.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+
+module.exports.hanlder = serverless(server);

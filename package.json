@@ -11,6 +11,7 @@
   "license": "ISC",
   "dependencies": {
     "ramda": "^0.27.1",
-    "uuid": "^8.3.2"
+    "uuid": "^8.3.2",
+    "serverless-http": "^2.7.0"
   }
 }
