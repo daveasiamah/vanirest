@@ -1,5 +1,5 @@
 const R = require("ramda");
-const { writeDataToFile } = require("../utils");
+const { writeDataToFile } = require("../utils"); //Replace with DB
 const uuid = require("uuid");
 let products = require("../data/products");
 
@@ -8,7 +8,7 @@ function create(product) {
     const newProduct = { id: uuid.v4(), ...product };
     products.push(newProduct);
 
-    writeDataToFile("./data/products.json", products);
+    writeDataToFile("data/products.json", products);
     resolve({ message: "Created Successfully.", newProduct });
   });
 }

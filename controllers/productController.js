@@ -3,39 +3,69 @@ const { getPostData } = require("../utils");
 
 //@Desc Create a new Product
 //@route POST /api/products
-async function createProduct(req, res) {
-  try {
-    const body = await getPostData(req);
-    const { name, description, price } = JSON.parse(body);
+// async function createProduct(req, res) {
+//   try {
+//     const body = await getPostData(req);
+//     const { name, description, price } = JSON.parse(body);
 
-    const product = {
-      name,
-      description,
-      price,
-    };
+//     const product = {
+//       name,
+//       description,
+//       price,
+//     };
 
-    const newProduct = await Product.create(product);
+//     const newProduct = await Product.create(product);
 
-    res.writeHead(201, { "Content-Type": "application/json" });
+//     res.writeHead(201, { "Content-Type": "application/json" });
 
-    res.end(JSON.stringify(newProduct));
-  } catch (error) {
-    console.log(error);
+//     res.end(JSON.stringify(newProduct));
+//   } catch (error) {
+//     console.log(error);
+//   }
+// }
+
+//TODO: Save Product to S3 JSON file
+module.exports.createProduct = async (event, context, callback) => {
+  const requestBody = JSON.parse(event.body);
+  const name = requestBody.name;
+  const description = requestBody.description;
+  const price = requestBody.price;
+  const product = { name, description, price };
+
+  console.info(`REQUEST BODY DATA IS: ${event.body}`);
+
+  if (
+    typeof name !== "string" ||
+    typeof description !== "string" ||
+    typeof price !== "number"
+  ) {
+    console.error("Validation Failed");
+    callback(
+      new Error("Couldn't submit candidate because of validation errors.")
+    );
+    return;
   }
-}
+
+  // const newProduct = await Product.create(product);
+
+  return {
+    statusCode: 201,
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(product),
+  };
+};
 
 //@Desc Get All Products
 //@route GET /api/products
-async function getProducts(req, res) {
-  try {
-    const products = await Product.findAll();
-
-    res.writeHead(200, { "Content-Type": "application/json" });
-    res.end(JSON.stringify(products));
-  } catch (error) {
-    console.log(error);
-  }
-}
+module.exports.getProducts = async (event) => {
+  const products = await Product.findAll();
+  console.log("Event from getProducts:", event);
+  return {
+    statusCode: 200,
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(products),
+  };
+};
 
 //@Desc Get Single Product
 //@route GET /api/product/:id
@@ -154,12 +184,12 @@ async function applyDiscount(req, res, id) {
   }
 }
 
-module.exports = {
-  createProduct,
-  getProducts,
-  getProduct,
-  getProductPrice,
-  updateProduct,
-  deleteProduct,
-  applyDiscount,
-};
+// module.exports = {
+//   createProduct,
+//   getProducts,
+//   getProduct,
+//   getProductPrice,
+//   updateProduct,
+//   deleteProduct,
+//   applyDiscount,
+// };

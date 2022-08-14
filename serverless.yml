@@ -1,3 +1,5 @@
+org: daveasiamah
+app: vanirest
 # serverless.yml
 
 service: vanirest
@@ -10,8 +12,18 @@ provider:
   region: us-east-1
 
 functions:
-  app:
-    handler: server.handler
+  # server:
+  #   handler: server.handler
+  #   events:
+  #     - http: ANY /
+  #     - http: "ANY {proxy+}"
+
+  getProducts:
+    handler: controllers/productController.getProducts
     events:
-      - http: ANY /
-      - http: "ANY {proxy+}"
+      - http: "GET /products"
+
+  createProduct:
+    handler: controllers/productController.createProduct
+    events:
+      - http: "POST /products"
